@@ -1,10 +1,13 @@
 const { Client, Events, SlashCommandBuilder } = require('discord.js');
-const { token } = require('./config.json');
 const {
     V2ComponentBuilder,
     V2TextDisplay,
     V2ContainerBuilder,
 } = require('v2componentsbuilder');
+
+require('dotenv').config();
+
+const token = process.env.TOKEN;
 
 const client = new Client({ intents: [] });
 
