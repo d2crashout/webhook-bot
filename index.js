@@ -4,11 +4,13 @@ const {
     V2TextDisplay,
     V2ContainerBuilder,
 } = require('v2componentsbuilder');
+const express = require('express');
 
 require('dotenv').config();
 
 const token = process.env.TOKEN;
-
+const app = express();
+const port = 3000;
 const client = new Client({ intents: [] });
 
 client.once(Events.ClientReady, async c => {
@@ -46,3 +48,13 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 client.login(token);
+
+// simple web server to keep render hosting up
+
+app.get('/', (req, res) => {
+    res.send("Hello world!");
+});
+
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});
