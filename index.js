@@ -1,4 +1,4 @@
-const { Client, Events, SlashCommandBuilder } = require('discord.js');
+const { Client, Events, SlashCommandBuilder, AllowedMentionsTypes } = require('discord.js');
 const { 
     V2ComponentBuilder, 
     V2TextDisplay, 
@@ -56,28 +56,13 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     if (interaction.commandName === "rules") {
-        const components = new V2ComponentBuilder().setComponents([
-            new V2ContainerBuilder()
-                .setComponents([
-                    new V2TextDisplay("Rules of the server:"),
-                    new V2TextDisplay("1. No profanity! (No swearing, NSFW, etc.)"),
-                    new V2TextDisplay("2. Scratch does not count as coding! You are not a dev if you use scratch!"),
-                    new V2TextDisplay("3. No bullying and doxing."),
-                    new V2TextDisplay("4. No viruses."),
-                    new V2TextDisplay("5. No racism."),
-                    new V2TextDisplay("6. Have fun!"),
-                    new V2UserSelectBuilder("@everyone")
-                ])
-                .setColor(1146986)
-        ]);
-
-        await interaction.reply(components.toJSON());
+        await interaction.reply("This command has been removed.");
     }
 });
 
 client.login(token);
 
-// simple web server to keep render hosting up
+// simple web server to keep render hosting up and check if bot is up
 
 app.get('/', (req, res) => {
     res.send("Hello world!");
