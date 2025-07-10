@@ -1,9 +1,15 @@
 const { Client, Events, SlashCommandBuilder } = require('discord.js');
-const {
-    V2ComponentBuilder,
-    V2TextDisplay,
-    V2ContainerBuilder,
-} = require('v2componentsbuilder');
+const { 
+    V2ComponentBuilder, 
+    V2TextDisplay, 
+    V2ContainerBuilder, 
+    V2UserSelectBuilder, 
+    V2ActionRowBuilder, 
+    V2RoleSelectBuilder, 
+    V2MentionableSelectBuilder, 
+    V2ChannelSelectBuilder, 
+    V2Separator }
+     = require('v2componentsbuilder');
 const express = require('express');
 
 require('dotenv').config();
@@ -24,6 +30,9 @@ client.once(Events.ClientReady, async c => {
         new SlashCommandBuilder()
             .setName("testing")
             .setDescription("Testing the V2 components."),
+        new SlashCommandBuilder()
+            .setName("rules")
+            .setDescription("Auto generates the rules of a server."),
     ]);
 });
 
@@ -39,6 +48,25 @@ client.on(Events.InteractionCreate, async interaction => {
             new V2ContainerBuilder()
                 .setComponents([
                     new V2TextDisplay("Testing")
+                ])
+                .setColor(1146986)
+        ]);
+
+        await interaction.reply(components.toJSON());
+    }
+
+    if (interaction.commandName === "rules") {
+        const components = new V2ComponentBuilder().setComponents([
+            new V2ContainerBuilder()
+                .setComponents([
+                    new V2TextDisplay("Rules of the server:"),
+                    new V2TextDisplay("1. No profanity! (No swearing, NSFW, etc.)"),
+                    new V2TextDisplay("2. Scratch does not count as coding! You are not a dev if you use scratch!"),
+                    new V2TextDisplay("3. No bullying and doxing."),
+                    new V2TextDisplay("4. No viruses."),
+                    new V2TextDisplay("5. No racism."),
+                    new V2TextDisplay("6. Have fun!"),
+                    new V2UserSelectBuilder("@everyone")
                 ])
                 .setColor(1146986)
         ]);
