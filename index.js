@@ -11,10 +11,13 @@ const {
     V2Separator }
      = require('v2componentsbuilder');
 const express = require('express');
+const axios = require('axios');
+const FormData = require('form-data');
 
 require('dotenv').config();
 
 const token = process.env.TOKEN;
+const webhookUrl = process.env.WEBHOOK_URL;
 const app = express();
 const port = 3000;
 const client = new Client({ intents: [] });
@@ -33,6 +36,19 @@ client.once(Events.ClientReady, async c => {
         new SlashCommandBuilder()
             .setName("rules")
             .setDescription("Auto generates the rules of a server."),
+        new SlashCommandBuilder()
+            .setName("webhook")
+            .setDescription("sends a message in a channel")
+            .addStringOption(option =>
+                option.setName("message")
+                    .setDescription("The message to send")
+                    .setRequired(true)
+            )
+            .addStringOption(option => 
+                option.setName("user")
+                    .setDescription("The name of the user to send the message as.")
+                    .setRequired(true)
+            ),
     ]);
 });
 
@@ -57,6 +73,21 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === "rules") {
         await interaction.reply("This command has been removed.");
+    }
+
+    if (interaction.commandName === "webhook") {
+        const request = new FormData();
+        const message = interaction.options.getString("message");
+        const user = interaction.options.getString("user");
+
+        request.append('content', message);
+        request.append('username', user);
+        
+        axios.post(webhookUrl, request, {
+          headers: request.getHeaders()
+        })
+        .then(() => interaction.reply("Message Sent!"))
+        .catch(err => interaction.reply(`Error: ${err}`));
     }
 });
 
