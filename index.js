@@ -28,25 +28,29 @@ client.once(Events.ClientReady, async c => {
     // Register both commands (ping + testing)
     await client.application.commands.set([
         new SlashCommandBuilder()
-            .setName("ping")
-            .setDescription("Replies with pong!"),
-        new SlashCommandBuilder()
-            .setName("testing")
-            .setDescription("Testing the V2 components."),
-        new SlashCommandBuilder()
-            .setName("rules")
-            .setDescription("Auto generates the rules of a server."),
-        new SlashCommandBuilder()
-            .setName("webhook")
+            .setName("message")
             .setDescription("sends a message in a channel")
             .addStringOption(option =>
-                option.setName("message")
+                option.setName("content")
                     .setDescription("The message to send")
                     .setRequired(true)
             )
             .addStringOption(option => 
                 option.setName("user")
                     .setDescription("The name of the user to send the message as.")
+                    .setRequired(true)
+            )
+            .addStringOption(option => 
+                option.setName("avatar_url")
+                    .setDescription("The image URL of the webhook avatar.")
+                    .setRequired(true)
+            ),
+        new SlashCommandBuilder()
+            .setName("create")
+            .setDescription("Creates a new webhook in the specified channel.")
+            .addChannelOption(option => 
+                option.setName("channel")
+                    .setDescription("The channel the webhook will be created in.")
                     .setRequired(true)
             ),
     ]);
@@ -55,33 +59,15 @@ client.once(Events.ClientReady, async c => {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === "ping") {
-        await interaction.reply("Pong!");
-    }
-
-    if (interaction.commandName === "testing") {
-        const components = new V2ComponentBuilder().setComponents([
-            new V2ContainerBuilder()
-                .setComponents([
-                    new V2TextDisplay("Testing")
-                ])
-                .setColor(1146986)
-        ]);
-
-        await interaction.reply(components.toJSON());
-    }
-
-    if (interaction.commandName === "rules") {
-        await interaction.reply("This command has been removed.");
-    }
-
-    if (interaction.commandName === "webhook") {
+    if (interaction.commandName === "message") {
         const request = new FormData();
-        const message = interaction.options.getString("message");
+        const message = interaction.options.getString("content");
         const user = interaction.options.getString("user");
+        const image = interaction.options.getString("avatar_url");
 
         request.append('content', message);
         request.append('username', user);
+        request.append('avatar_url', image);
         
         axios.post(webhookUrl, request, {
           headers: request.getHeaders()
